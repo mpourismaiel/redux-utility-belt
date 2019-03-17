@@ -43,7 +43,7 @@ export interface ReducerObject<S> {
  * @param initialState Initial State of the reducer
  * @param reducerObject An object to handle different action types
  */
-export function reducer<S = any>(
+export function createReducer<S = any>(
   initialState: S,
   reducerObject: ReducerObject<S>
 ): Reducer<S, AnyAction> {
