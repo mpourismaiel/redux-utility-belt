@@ -30,7 +30,7 @@ function makeRequestWorker(method: 'get' | 'post' | 'put' | 'delete') {
 
     try {
       // Create a +REQUEST action. Can be used to create loading states.
-      yield put({ type: requestType(type) });
+      yield put({ type: requestType(type), meta: action.meta });
 
       // Fetch data to the server.
       const { data } = yield call(
@@ -38,12 +38,16 @@ function makeRequestWorker(method: 'get' | 'post' | 'put' | 'delete') {
         action.payload.url,
         action.payload.data
       );
-      yield put({ type: successType(type), payload: data });
+      yield put({ type: successType(type), payload: data, meta: action.meta });
       if (action.payload.callback && action.payload.callback.onSuccess) {
         yield call(action.payload.callback.onSuccess);
       }
     } catch (err) {
-      yield put({ type: failureType(type), payload: { error: err.message } });
+      yield put({
+        type: failureType(type),
+        payload: { error: err.message },
+        meta: action.meta
+      });
       if (action.payload.callback && action.payload.callback.onFailure) {
         yield call(action.payload.callback.onFailure);
       }
