@@ -1,7 +1,7 @@
 {
   "name": "redux-utility-belt",
   "version": "0.0.3",
-  "description": "",
+  "description": "Redux utility functions",
   "keywords": [
     "redux",
     "saga"
