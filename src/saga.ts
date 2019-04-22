@@ -38,21 +38,38 @@ function makeRequestWorker(method: 'get' | 'post' | 'put' | 'delete') {
         action.payload.url,
         action.payload.data
       );
-      yield put({ type: successType(type), payload: data, meta: action.meta });
-      if (action.payload.callback && action.payload.callback.onSuccess) {
-        yield call(action.payload.callback.onSuccess);
+
+      if (
+        data.hasError ||
+        data.error ||
+        (typeof data.code !== 'undefined' && data.code.toString()[0] !== '2')
+      ) {
+        handleError(action, type, data);
+      } else {
+        yield put({
+          type: successType(type),
+          payload: data,
+          meta: action.meta
+        });
+        if (action.payload.callback && action.payload.callback.onSuccess) {
+          yield call(action.payload.callback.onSuccess);
+        }
       }
     } catch (err) {
-      yield put({
-        type: failureType(type),
-        payload: { error: err.message },
-        meta: action.meta
-      });
-      if (action.payload.callback && action.payload.callback.onFailure) {
-        yield call(action.payload.callback.onFailure);
-      }
+      handleError(action, type, err);
     }
   };
+}
+
+function* handleError(action, type, err) {
+  yield put({
+    type: failureType(type),
+    payload: { error: err.message },
+    meta: action.meta
+  });
+  if (action.payload.callback && action.payload.callback.onFailure) {
+    yield call(action.payload.callback.onFailure);
+  }
 }
 
 const matchPattern = (pattern: string) => {
