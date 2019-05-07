@@ -33,11 +33,12 @@ function makeRequestWorker(method: 'get' | 'post' | 'put' | 'delete') {
       yield put({ type: requestType(type), meta: action.meta });
 
       // Fetch data to the server.
-      const { data } = yield call(
-        fetchAlt[method],
-        action.payload.url,
-        action.payload.data
-      );
+      const { data } = yield call(fetchAlt[method], {
+        url: action.payload.url,
+        method: action.payload.data,
+        headers: action.payload.headers,
+        ...action.payload.config
+      });
 
       if (
         data.hasError ||

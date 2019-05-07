@@ -12,7 +12,7 @@ yarn add redux-utility-belt
 
 ### Making API calls
 
-You need to add the restSaga and set axios (or any other library with the four supported methods (`get`, `post`, `put`, `delete`) that receive `url` and `data` as their arguments):
+You need to add the restSaga and set axios (or any other function that receives a `config` object containing `url`, `data` and `config` as their arguments):
 
 ```
 import { restSagas, setFetchAlt } from 'redux-utility-belt';
