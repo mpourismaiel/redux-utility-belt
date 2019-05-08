@@ -33,13 +33,17 @@ function makeRequestWorker(method: 'get' | 'post' | 'put' | 'delete') {
       yield put({ type: requestType(type), meta: action.meta });
 
       // Fetch data to the server.
-      const { data } = yield call(fetchAlt, {
+      const config = {
         url: action.payload.url,
         method: method,
         data: action.payload.data,
         headers: action.payload.headers,
         ...action.payload.config
-      });
+      };
+
+      if (!config.headers) delete config.headers;
+      if (!config.data) delete config.data;
+      const { data } = yield call(fetchAlt, config);
 
       if (
         data.hasError ||
