@@ -54,7 +54,7 @@ function makeRequestWorker(method: 'get' | 'post' | 'put' | 'delete') {
           meta: action.meta
         });
         if (action.payload.callback && action.payload.callback.onSuccess) {
-          yield call(action.payload.callback.onSuccess);
+          yield call(action.payload.callback.onSuccess, data, action);
         }
       }
     } catch (err) {
@@ -70,7 +70,7 @@ function* handleError(action, type, err) {
     meta: action.meta
   });
   if (action.payload.callback && action.payload.callback.onFailure) {
-    yield call(action.payload.callback.onFailure);
+    yield call(action.payload.callback.onFailure, err, action);
   }
 }
 
