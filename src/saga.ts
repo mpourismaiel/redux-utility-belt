@@ -35,7 +35,8 @@ function makeRequestWorker(method: 'get' | 'post' | 'put' | 'delete') {
       // Fetch data to the server.
       const { data } = yield call(fetchAlt, {
         url: action.payload.url,
-        method: action.payload.data,
+        method: method,
+        data: action.payload.data,
         headers: action.payload.headers,
         ...action.payload.config
       });
