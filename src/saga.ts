@@ -50,7 +50,7 @@ function makeRequestWorker(method: 'get' | 'post' | 'put' | 'delete') {
         data.error ||
         (typeof data.code !== 'undefined' && data.code.toString()[0] !== '2')
       ) {
-        handleError(action, type, data);
+        throw data;
       } else {
         yield put({
           type: successType(type),
@@ -62,20 +62,16 @@ function makeRequestWorker(method: 'get' | 'post' | 'put' | 'delete') {
         }
       }
     } catch (err) {
-      handleError(action, type, err);
+      yield put({
+        type: failureType(type),
+        payload: { error: err },
+        meta: action.meta
+      });
+      if (action.payload.callback && action.payload.callback.onFailure) {
+        yield call(action.payload.callback.onFailure, err, action);
+      }
     }
   };
-}
-
-function* handleError(action, type, err) {
-  yield put({
-    type: failureType(type),
-    payload: { error: err.message },
-    meta: action.meta
-  });
-  if (action.payload.callback && action.payload.callback.onFailure) {
-    yield call(action.payload.callback.onFailure, err, action);
-  }
 }
 
 const matchPattern = (pattern: string) => {
