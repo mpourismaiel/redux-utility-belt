@@ -5,6 +5,7 @@ export const setBase = (type: string) => {
 
 const post = 'REST_POST/';
 const put = 'REST_PUT/';
+const patch = 'REST_PATCH/';
 const get = 'REST_GET/';
 const deleteT = 'REST_DELETE/';
 
@@ -19,6 +20,7 @@ export const failureType = (type: string): string =>
 
 export const postType = (type: string): string => baseType(post + type);
 export const putType = (type: string): string => baseType(put + type);
+export const patchType = (type: string): string => baseType(patch + type);
 export const getType = (type: string): string => baseType(get + type);
 export const deleteType = (type: string): string => baseType(deleteT + type);
 

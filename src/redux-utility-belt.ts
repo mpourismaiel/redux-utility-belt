@@ -11,3 +11,5 @@ export {
   deleteType
 } from './rest-actions';
 export { createReducer } from './reducer';
+export { default as rulebook } from './rulebook';
+export { default as restMiddleware } from './rest-middleware';
