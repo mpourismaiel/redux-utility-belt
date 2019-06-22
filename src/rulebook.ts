@@ -13,9 +13,13 @@ const rulebook = (rules: Rules) => {
     rules.forEach(
       rule =>
         rule.rule(action, store) &&
-        (typeof rule.fn === 'function'
-          ? rule.fn(action, store)
-          : (rule.fn as Callback[]).forEach(fn => fn(action, store)))
+        setTimeout(
+          () =>
+            typeof rule.fn === 'function'
+              ? rule.fn(action, store)
+              : (rule.fn as Callback[]).forEach(fn => fn(action, store)),
+          0
+        )
     );
     return next(action);
   };
