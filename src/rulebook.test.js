@@ -14,9 +14,9 @@ const create = middleware => {
 
 describe('rulebook', () => {
   it('should call callbacks if a rule is proven', () => {
-    let called = false;
+    const callback = jest.fn(() => expect(callback).toHaveBeenCalled());
     const middleware = rulebook([
-      { rule: action => action && action.type, fn: () => (called = true) }
+      { rule: action => action && action.type, fn: callback }
     ]);
 
     const { next, invoke } = create(middleware);
@@ -24,12 +24,12 @@ describe('rulebook', () => {
     invoke(action);
 
     expect(next).toHaveBeenCalledWith(action);
-    expect(called).toEqual(true);
   });
+
   it('should call callbacks if a rule is proven', () => {
-    let called = false;
+    const callback = jest.fn(() => expect(callback).toHaveBeenCalled());
     const middleware = rulebook([
-      { rule: action => action && action.type, fn: () => (called = true) }
+      { rule: action => action && action.type, fn: callback }
     ]);
 
     const { next, invoke } = create(middleware);
@@ -37,15 +37,14 @@ describe('rulebook', () => {
     invoke(action);
 
     expect(next).toHaveBeenCalledWith(action);
-    expect(called).toEqual(true);
   });
 
   it('should call array of callbacks if a rule is proven', () => {
-    let called = 0;
+    const callback = jest.fn(() => expect(callback).toHaveBeenCalledTimes(2));
     const middleware = rulebook([
       {
         rule: action => action && action.type,
-        fn: [() => called++, () => called++]
+        fn: [callback, callback]
       }
     ]);
 
@@ -54,15 +53,17 @@ describe('rulebook', () => {
     invoke(action);
 
     expect(next).toHaveBeenCalledWith(action);
-    expect(called).toEqual(2);
   });
 
   it('should call callbacks with dispatch if a rule is proven', () => {
+    const callback = jest.fn(() =>
+      expect(callback).toHaveBeenCalledWith(newAction, store)
+    );
     const newAction = { type: 'NEW_ACTION' };
     const middleware = rulebook([
       {
         rule: action => action && action.type,
-        fn: (_, { dispatch }) => dispatch(newAction)
+        fn: callback
       }
     ]);
 
@@ -71,15 +72,14 @@ describe('rulebook', () => {
     invoke(action);
 
     expect(next).toHaveBeenCalledWith(action);
-    expect(store.dispatch).toHaveBeenCalledWith(newAction);
   });
 
   it('should not call callbacks if a rule is proven', () => {
-    let called = false;
+    const callback = jest.fn(() => expect(callback).toHaveBeenCalled());
     const middleware = rulebook([
       {
         rule: action => action && action.type === 'NOT_TEST',
-        fn: () => (called = true)
+        fn: callback
       }
     ]);
 
@@ -88,6 +88,5 @@ describe('rulebook', () => {
     invoke(action);
 
     expect(next).toHaveBeenCalledWith(action);
-    expect(called).toEqual(false);
   });
 });

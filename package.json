@@ -24,7 +24,7 @@
   "scripts": {
     "lint": "tslint  --project tsconfig.json -t codeFrame 'src/**/*.ts'",
     "prebuild": "rimraf dist",
-    "prepublish": "npm run build",
+    "prepublish": "npm run test && npm run build",
     "build": "tsc --module commonjs && rollup -c rollup.config.ts",
     "start": "rollup -c rollup.config.ts -w",
     "deploy-docs": "ts-node tools/gh-pages-publish",

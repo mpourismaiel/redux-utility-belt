@@ -15,21 +15,20 @@ const create = middleware => {
 
 describe('restMiddleware', () => {
   it('should call fetch when a request action is made', () => {
-    const fetch = jest.fn();
+    const fetch = jest.fn(() =>
+      expect(fetch).toHaveBeenCalledWith(action, store)
+    );
     const { store, invoke } = create(restMiddleware(fetch));
     const action = { type: getType('SAMPLE'), payload: { url: '/test' } };
     invoke(action);
-
-    expect(fetch).toHaveBeenCalled();
-    expect(store.dispatch).toHaveBeenCalled();
   });
 
   it('should call fetch with appropriate method when a request action is made', () => {
-    const fetch = jest.fn();
+    const fetch = jest.fn(() =>
+      expect(fetch).toHaveBeenCalledWith({ method: 'post', url: '/test' })
+    );
     const { invoke } = create(restMiddleware(fetch));
     const action = { type: postType('SAMPLE'), payload: { url: '/test' } };
     invoke(action);
-
-    expect(fetch).toHaveBeenCalledWith({ method: 'post', url: '/test' });
   });
 });

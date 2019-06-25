@@ -47,7 +47,9 @@ const requestMethod = action => {
   }
 };
 
-const restMiddleware = fetchAlt =>
+export type Options = { failCondition?: (response) => boolean };
+
+const restMiddleware = (fetchAlt, options: Options = {}) =>
   rulebook([
     {
       rule: isRequest,
@@ -75,35 +77,30 @@ const restMiddleware = fetchAlt =>
 
           if (!config.headers) delete config.headers;
           if (!config.data) delete config.data;
-          const { data } = await fetchAlt(config);
+          const response = await fetchAlt(config);
 
-          if (
-            data.hasError ||
-            data.error ||
-            (typeof data.code !== 'undefined' &&
-              data.code.toString()[0] !== '2')
-          ) {
-            throw data;
+          if (options.failCondition && options.failCondition(response)) {
+            throw response;
           } else {
             dispatch({
               type: successType(type),
-              payload: data,
+              payload: response,
               meta: action.meta
             });
 
             if (action.payload.callback && action.payload.callback.onSuccess) {
-              action.payload.callback.onSuccess(data, action);
+              action.payload.callback.onSuccess(response, action);
             }
           }
-        } catch (err) {
+        } catch (error) {
           dispatch({
             type: failureType(type),
-            payload: { error: err },
+            payload: { error },
             meta: action.meta
           });
 
           if (action.payload.callback && action.payload.callback.onFailure) {
-            action.payload.callback.onFailure(err, action);
+            action.payload.callback.onFailure(error, action);
           }
         }
       }
